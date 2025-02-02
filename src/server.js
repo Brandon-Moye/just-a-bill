@@ -6,7 +6,7 @@ dotenv.config();
 
 const apiKey = process.env.API_KEY;
 const PORT = 5001;
-const state = "NV";
+const state = "CA";
 const url = `https://api.congress.gov/v3/member/${state}?api_key=${apiKey}`;
 
 // GET request
