@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Hiding API KEY in root
-.env
+src/.env
