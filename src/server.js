@@ -2,22 +2,24 @@
 import https from "https";
 import http from "http";
 import dotenv from "dotenv";
+import { rejects } from "assert";
+import url from "url";
 dotenv.config();
 
 const apiKey = process.env.API_KEY;
 const PORT = 5001;
-const state = "NV";
-const url = `https://api.congress.gov/v3/member/${state}?api_key=${apiKey}`;
-
 // GET request
-export const getStateSpecificMembers = () => {
-  console.log("api key is ", apiKey);
+export const getStateSpecificMembers = (stateCode) => {
   return new Promise((resolve, reject) => {
+    if (!stateCode) {
+      reject(new Error("State code is required"));
+      return;
+    }
+    const url = `https://api.congress.gov/v3/member/${stateCode}?api_key=${apiKey}`;
+
     https
       .get(url, (res) => {
         let data = "";
-
-        console.log(res.statusCode);
 
         // 'data' event is triggered when a chunk of data is received
         res.on("data", (chunk) => {
@@ -34,7 +36,7 @@ export const getStateSpecificMembers = () => {
               const members = parsedData.members.map((member) => ({
                 name: member.name,
               }));
-              resolve(members);
+              resolve(members); // successful result of Promise
             } catch (e) {
               console.error("Error parsing JSON:", e.message);
               reject(new Error(`${e.message}`));
@@ -60,6 +62,8 @@ export const getStateSpecificMembers = () => {
 const server = http.createServer(async (req, res) => {
   console.log(`server received req. ${req.method} ${req.url}`);
 
+  const parsedUrl = url.parse(req.url, true);
+  const { pathname, query } = parsedUrl;
   // Handle CORS Preflight Requests
   if (req.method === "OPTIONS") {
     res.writeHead(204, {
@@ -70,9 +74,10 @@ const server = http.createServer(async (req, res) => {
     res.end();
     return;
   }
-  if (req.url === "/api/members" && req.method === "GET") {
+  if (pathname === "/api/members" && req.method === "GET") {
+    const state = query.state?.toUpperCase();
     try {
-      const members = await getStateSpecificMembers();
+      const members = await getStateSpecificMembers(state);
       res.writeHead(200, {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
