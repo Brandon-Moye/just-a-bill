@@ -16,12 +16,10 @@ export const getStateSpecificMembers = (stateCode) => {
       return;
     }
     const url = `https://api.congress.gov/v3/member/${stateCode}?api_key=${apiKey}`;
-    console.log("api key is ", apiKey);
+
     https
       .get(url, (res) => {
         let data = "";
-
-        console.log(res.statusCode);
 
         // 'data' event is triggered when a chunk of data is received
         res.on("data", (chunk) => {
@@ -38,7 +36,7 @@ export const getStateSpecificMembers = (stateCode) => {
               const members = parsedData.members.map((member) => ({
                 name: member.name,
               }));
-              resolve(members);
+              resolve(members); // successful result of Promise
             } catch (e) {
               console.error("Error parsing JSON:", e.message);
               reject(new Error(`${e.message}`));
@@ -63,7 +61,6 @@ export const getStateSpecificMembers = (stateCode) => {
 // Node.js server
 const server = http.createServer(async (req, res) => {
   console.log(`server received req. ${req.method} ${req.url}`);
-  console.log("test", apiKey);
 
   const parsedUrl = url.parse(req.url, true);
   const { pathname, query } = parsedUrl;
