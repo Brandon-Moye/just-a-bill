@@ -8,7 +8,10 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5001/api/test");
+      // const response = await fetch("http://localhost:5001/api/test");
+      const stateMembers = await fetch(
+        "http://localhost:5001/api/membersByState"
+      );
       const data = await response.json();
     } catch (error) {
       console.error("Error fetching data: ", error);

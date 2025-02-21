@@ -16,8 +16,12 @@ export const router = (req, res) => {
     return;
   }
 
-  if (req.url === "api/members" && req.method === "GET") {
-    //
+  if (req.url === "/api/membersByState" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: "API is working!" }));
+  } else {
+    res.writeHead(404, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Route not found" }));
   }
   if (req.url === "/api/test" && req.method === "GET") {
     // .writeHead(statusCode, headersObject)
