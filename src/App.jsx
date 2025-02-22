@@ -12,7 +12,7 @@ function App() {
       const stateMembers = await fetch(
         "http://localhost:5001/api/membersByState"
       );
-      const data = await response.json();
+      // const data = await response.json();
     } catch (error) {
       console.error("Error fetching data: ", error);
     }

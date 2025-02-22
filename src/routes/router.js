@@ -1,4 +1,6 @@
-export const router = (req, res) => {
+import fetchAPIData from "../services/apiService.js";
+
+export const router = async (req, res) => {
   // setting Headers (metadata that is sent along with the req/res)
   // adds or modifies individual headers BEFORE sending the response (mainly preflight requests)
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); // Allow frontend
@@ -17,8 +19,16 @@ export const router = (req, res) => {
   }
 
   if (req.url === "/api/membersByState" && req.method === "GET") {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ message: "API is working!" }));
+    try {
+      const data = await fetchAPIData();
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(data));
+      return; // have to get out of statement when done
+    } catch (error) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Internal server error" }));
+      return; // have to get out of statement when done
+    }
   } else {
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Route not found" }));
