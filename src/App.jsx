@@ -20,7 +20,9 @@ function App() {
 
   return (
     <>
-      just a bill
+      <h1>just a bill</h1>
+      <label for="stateCode">Enter State Code: </label>
+      <input type="text" id="stateCode" maxLength="2"></input>
       <button onClick={fetchData}>Fetch Data</button>
     </>
   );
