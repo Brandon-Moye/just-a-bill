@@ -2,9 +2,10 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const apiKey = process.env.API_KEY;
-const url = `https://api.congress.gov/v3/member/AL?api_key=${apiKey}`;
 console.log("fetching data");
-const fetchAPIData = async () => {
+const fetchAPIData = async (stateCode) => {
+  const url = `https://api.congress.gov/v3/member/${stateCode}?api_key=${apiKey}`;
+
   try {
     const response = await fetch(url); //metadata (status codes)
 
@@ -14,7 +15,7 @@ const fetchAPIData = async () => {
     //extract data, returns a Promise
     // await ensures that the data is converted to from JSON to object
     const data = await response.json();
-    console.log(data);
+    console.log("HERE IS THE DATA: ", data);
     return data;
   } catch (error) {
     console.error("error fetching data ", error);

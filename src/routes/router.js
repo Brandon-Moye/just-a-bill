@@ -18,9 +18,12 @@ export const router = async (req, res) => {
     return;
   }
 
-  if (req.url === "/api/membersByState" && req.method === "GET") {
+  const urlParams = new URL(req.url, `https://${req.headers.host}`); //FOLLOW UP
+  const stateCode = urlParams.searchParams.get("state"); //FOLLOW UP
+  if (req.url.startsWith("/api/membersByState") && req.method === "GET") {
+    console.log(stateCode);
     try {
-      const data = await fetchAPIData();
+      const data = await fetchAPIData(stateCode);
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify(data));
       return; // have to get out of statement when done
