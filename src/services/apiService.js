@@ -4,7 +4,7 @@ dotenv.config();
 const apiKey = process.env.API_KEY;
 console.log("fetching data");
 const fetchAPIData = async (stateCode) => {
-  const url = `https://api.congress.gov/v3/member/${stateCode}?api_key=${apiKey}`;
+  const url = `https://api.congress.gov/v3/member/${stateCode}?currentMember=True&api_key=${apiKey}`;
 
   try {
     const response = await fetch(url); //metadata (status codes)

@@ -24,6 +24,7 @@ export const router = async (req, res) => {
     console.log(stateCode);
     try {
       const data = await fetchAPIData(stateCode);
+
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify(data));
       return; // have to get out of statement when done
