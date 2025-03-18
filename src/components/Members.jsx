@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Members({ members }) {
+export default function Members({ members, onSelectedMember }) {
   return (
     <div>
       {members.map((member) => (
@@ -8,6 +8,9 @@ export default function Members({ members }) {
           <h3>{member.name}</h3>
           <p>ID: {member.bioguideId}</p>
           <p>District: {member.district}</p>
+          <button onClick={() => onSelectedMember(member.bioguideId)}>
+            get legislation
+          </button>
         </div>
       ))}
     </div>
