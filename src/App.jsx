@@ -25,22 +25,20 @@ function App() {
 
       const members = await stateMembers.json();
       setStateCongressMembers(members.members);
-      // const data = await response.json();
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
   };
 
-  const handleMemberSelect = (bioguideId) => {
-    console.log(bioguideId);
+  const handleMemberSelect = async (bioguideId) => {
     setSelectedMemberId(bioguideId);
-  };
 
-  const fetchSponsoredLegislation = async () => {
     try {
       const sponsoredLegislation = await fetch(
-        `http://localhost:5001/api/sponsoredLegislation?bioguideId=${stateCongressMembers}`
+        `http://localhost:5001/api/sponsoredLegislation?bioguideId=${selectedMemberId}&t=${Date.now()}`
       );
+      const memberSponsored = await sponsoredLegislation.json();
+      console.log("--- THEY SPONSORED ----", memberSponsored);
     } catch (error) {
       console.error("Error fetching data: ", error);
     }

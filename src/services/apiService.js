@@ -15,7 +15,6 @@ const fetchAPIData = async (stateCode) => {
     //extract data, returns a Promise
     // await ensures that the data is converted to from JSON to object
     const data = await response.json();
-    console.log("HERE IS THE DATA: ", data);
     return data;
   } catch (error) {
     console.error("error fetching data ", error);
@@ -23,4 +22,20 @@ const fetchAPIData = async (stateCode) => {
   }
 };
 
-export default fetchAPIData;
+const fetchSponsoredLegislation = async (bioguideId) => {
+  const sponsoredUrl = `https://api.congress.gov/v3/member/${bioguideId}/sponsored-legislation?api_key=${apiKey}`;
+  try {
+    const responseSponsoredLegislation = await fetch(sponsoredUrl);
+
+    if (!responseSponsoredLegislation.ok) {
+      throw new Error(
+        `HTTPS error Status: ${responseSponsoredLegislation.status}`
+      );
+    }
+    const sponsoredData = await responseSponsoredLegislation.json();
+    return sponsoredData;
+  } catch (error) {
+    console.error("error fetching data ", error);
+  }
+};
+export { fetchAPIData, fetchSponsoredLegislation };
