@@ -1,4 +1,7 @@
-import fetchAPIData from "../services/apiService.js";
+import {
+  fetchAPIData,
+  fetchSponsoredLegislation,
+} from "../services/apiService.js";
 
 export const router = async (req, res) => {
   // setting Headers (metadata that is sent along with the req/res)
@@ -20,6 +23,7 @@ export const router = async (req, res) => {
 
   const urlParams = new URL(req.url, `https://${req.headers.host}`); //FOLLOW UP
   const stateCode = urlParams.searchParams.get("state"); //FOLLOW UP
+  const bioguideId = urlParams.searchParams.get("bioguideId");
   if (req.url.startsWith("/api/membersByState") && req.method === "GET") {
     console.log(stateCode);
     try {
@@ -31,23 +35,25 @@ export const router = async (req, res) => {
     } catch (error) {
       res.writeHead(500, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: "Internal server error" }));
-      return; // have to get out of statement when done
     }
-  } else {
-    res.writeHead(404, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: "Route not found" }));
+    return; // have to get out of statement when done
   }
-  if (req.url === "/api/test" && req.method === "GET") {
-    // .writeHead(statusCode, headersObject)
-    // sets all headers at once and defines status code
-    res.writeHead(200, { "Content-Type": "application/json" });
-    // .end will end the response and sends data back to the client
-    // without .end the server won't know when to stop and not send data
-    res.end(JSON.stringify({ message: "API is working!" }));
-    console.log("API is working!");
-  } else {
-    // sets all headers at once and defines status code
-    res.writeHead(404, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: "Route not found" }));
+
+  if (req.url.startsWith("/api/sponsoredLegislation") && req.method === "GET") {
+    console.log("I am trying to show sponsored legislation");
+    try {
+      const sponsoredData = await fetchSponsoredLegislation(bioguideId);
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(sponsoredData));
+      return; // have to get out of statement when done
+    } catch (error) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Internal server error" }));
+    }
+    return; // have to get out of statement when done
   }
+  // if no route matched, return 404
+  res.writeHead(404, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ error: "Route not found" }));
 };
