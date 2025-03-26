@@ -53,6 +53,13 @@ export const router = async (req, res) => {
     }
     return; // have to get out of statement when done
   }
+
+  //new ollama
+  if (req.method === "POST" && req.url === "/ollama/ask") {
+    let body = "blank body";
+
+    req.on();
+  }
   // if no route matched, return 404
   res.writeHead(404, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ error: "Route not found" }));
