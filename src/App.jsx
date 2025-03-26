@@ -9,6 +9,9 @@ function App() {
   const [stateCode, setStateCode] = useState("");
   const [stateCongressMembers, setStateCongressMembers] = useState([]);
   const [selectedMemberId, setSelectedMemberId] = useState(null);
+
+  const [prompt, setPrompt] = useState("");
+  const [ollamaResponse, setOllamaResponse] = useState("");
   useState(null);
 
   const fetchData = async () => {
@@ -44,6 +47,16 @@ function App() {
     }
   };
 
+  const ollamaZero = async () => {
+    const ollamaRes = await fetch("http://localhost:5001/ollama/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
+
+    const ollamaData = await ollamaRes.json();
+    console.log("ollama said: ", ollamaData);
+  };
   return (
     <>
       <a href="https://www.youtube.com/watch?v=SZ8psP4S6BQ&pp=ygUPaSdtIGp1c3QgYSBiaWxs">
@@ -57,6 +70,11 @@ function App() {
         onChange={(e) => setStateCode(e.target.value.toUpperCase())}
       ></input>
       <button onClick={fetchData}>Fetch Data</button>
+      <textarea
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+      ></textarea>
+      <button onClick={ollamaZero}>Ask</button>
       <Members
         members={stateCongressMembers}
         onSelectedMember={handleMemberSelect}
