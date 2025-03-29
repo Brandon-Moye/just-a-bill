@@ -38,4 +38,35 @@ const fetchSponsoredLegislation = async (bioguideId) => {
     console.error("error fetching data ", error);
   }
 };
-export { fetchAPIData, fetchSponsoredLegislation };
+
+const fetchOllamaResponse = async (prompt) => {
+  const ollamaServer = "http://localhost:11434/api/generate";
+
+  try {
+    console.log("sending request to Ollama with prompt: ", prompt);
+    const responseOllama = await fetch(ollamaServer, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "llama3.2",
+        prompt: prompt,
+        stream: false,
+      }),
+    });
+
+    console.log("received response status: ", responseOllama.status);
+    if (!responseOllama.ok) {
+      const errorText = await responseOllama.text();
+      throw new Error(
+        `Failed to fetch Ollama response: ${responseOllama.status} - ${errorText}`
+      );
+    }
+    const ollamadata = await responseOllama.json();
+    console.log("ollama response ", ollamadata.response);
+    return ollamadata.response || "No response from Ollama";
+  } catch (error) {
+    console.error("error communicating with ollama: ", error);
+    throw new Error("failed to get response from ollama");
+  }
+};
+export { fetchAPIData, fetchSponsoredLegislation, fetchOllamaResponse };
