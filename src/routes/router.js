@@ -1,13 +1,14 @@
 import {
   fetchAPIData,
   fetchSponsoredLegislation,
+  fetchOllamaResponse,
 } from "../services/apiService.js";
 
 export const router = async (req, res) => {
   // setting Headers (metadata that is sent along with the req/res)
   // adds or modifies individual headers BEFORE sending the response (mainly preflight requests)
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); // Allow frontend
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS"); // Allow specific methods
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow frontend
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST ,OPTIONS"); // Allow specific methods
 
   // tells the browswer to allow requests with Content-Type headers
   res.setHeader("Access-Control-Allow-Headers", "Content-Type"); // Allow specific headers
@@ -55,10 +56,35 @@ export const router = async (req, res) => {
   }
 
   //new ollama
-  if (req.method === "POST" && req.url === "/ollama/ask") {
-    let body = "blank body";
+  if (req.url.startsWith("/api/ollama") && req.method === "POST") {
+    let body = "";
 
-    req.on();
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+    req.on("end", async () => {
+      try {
+        console.log("received ollama request body: ", body);
+        const prompt = JSON.parse(body);
+        console.log("parsed body: ", prompt);
+
+        if (!prompt) {
+          throw new Error("prompt is missing from the request body");
+        }
+        const ollamaResponse = await fetchOllamaResponse(prompt);
+        console.log("final response to send: ", ollamaResponse);
+
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ response: ollamaResponse }));
+      } catch (error) {
+        console.error("Error fetching ollama response: ", error);
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({ error: "Failed to fetch response from Ollama" })
+        );
+      }
+    });
+    return;
   }
   // if no route matched, return 404
   res.writeHead(404, { "Content-Type": "application/json" });

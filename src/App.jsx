@@ -48,14 +48,23 @@ function App() {
   };
 
   const ollamaZero = async () => {
-    const ollamaRes = await fetch("http://localhost:5001/ollama/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt }),
-    });
+    try {
+      const ollamaRes = await fetch("http://localhost:5001/api/ollama", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(prompt),
+      });
 
-    const ollamaData = await ollamaRes.json();
-    console.log("ollama said: ", ollamaData);
+      if (!ollamaRes.ok) {
+        throw new Error("Failed to fetch response from Ollama");
+      }
+
+      const ollamaData = await ollamaRes.json();
+      setOllamaResponse(ollamaData.response); // Store response in state
+      console.log("Ollama said: ", ollamaData);
+    } catch (error) {
+      console.error("Error fetching Ollama response:", error);
+    }
   };
   return (
     <>
