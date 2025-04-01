@@ -9,6 +9,7 @@ function App() {
   const [stateCode, setStateCode] = useState("");
   const [stateCongressMembers, setStateCongressMembers] = useState([]);
   const [selectedMemberId, setSelectedMemberId] = useState(null);
+  const [listOfSponsLegsln, setListOfSponsLegsln] = useState([]);
 
   const [prompt, setPrompt] = useState("");
   const [ollamaResponse, setOllamaResponse] = useState("");
@@ -28,6 +29,7 @@ function App() {
 
       const members = await stateMembers.json();
       setStateCongressMembers(members.members);
+      console.log(stateCongressMembers);
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
@@ -38,10 +40,11 @@ function App() {
 
     try {
       const sponsoredLegislation = await fetch(
-        `http://localhost:5001/api/sponsoredLegislation?bioguideId=${selectedMemberId}&t=${Date.now()}`
+        `http://localhost:5001/api/sponsoredLegislation?bioguideId=${bioguideId}&t=${Date.now()}`
       );
       const memberSponsored = await sponsoredLegislation.json();
-      console.log("--- THEY SPONSORED ----", memberSponsored);
+      setListOfSponsLegsln(memberSponsored.sponsoredLegislation);
+      console.log("--- THEY SPONSORED ----", listOfSponsLegsln);
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
@@ -88,7 +91,7 @@ function App() {
         members={stateCongressMembers}
         onSelectedMember={handleMemberSelect}
       />
-      <SponsoredLegislation />
+      <SponsoredLegislation sponsored={listOfSponsLegsln} />
     </>
   );
 }
