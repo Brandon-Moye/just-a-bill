@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import Members from "./components/Members";
-import Bills from "./components/Bills";
+import SponsoredLegislation from "./components/SponsoredLegislation";
 import { use } from "react";
 
 function App() {
@@ -61,7 +61,7 @@ function App() {
 
       const ollamaData = await ollamaRes.json();
       setOllamaResponse(ollamaData.response); // Store response in state
-      console.log("Ollama said: ", ollamaData);
+      console.log("Ollama said: ", ollamaResponse);
     } catch (error) {
       console.error("Error fetching Ollama response:", error);
     }
@@ -88,7 +88,7 @@ function App() {
         members={stateCongressMembers}
         onSelectedMember={handleMemberSelect}
       />
-      <Bills />
+      <SponsoredLegislation />
     </>
   );
 }
