@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import Members from "./components/Members";
-import Bills from "./components/Bills";
+import SponsoredLegislation from "./components/SponsoredLegislation";
 import { use } from "react";
 
 function App() {
@@ -9,6 +9,7 @@ function App() {
   const [stateCode, setStateCode] = useState("");
   const [stateCongressMembers, setStateCongressMembers] = useState([]);
   const [selectedMemberId, setSelectedMemberId] = useState(null);
+  const [listOfSponsLegsln, setListOfSponsLegsln] = useState([]);
 
   const [prompt, setPrompt] = useState("");
   const [ollamaResponse, setOllamaResponse] = useState("");
@@ -28,6 +29,7 @@ function App() {
 
       const members = await stateMembers.json();
       setStateCongressMembers(members.members);
+      console.log(stateCongressMembers);
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
@@ -38,10 +40,11 @@ function App() {
 
     try {
       const sponsoredLegislation = await fetch(
-        `http://localhost:5001/api/sponsoredLegislation?bioguideId=${selectedMemberId}&t=${Date.now()}`
+        `http://localhost:5001/api/sponsoredLegislation?bioguideId=${bioguideId}&t=${Date.now()}`
       );
       const memberSponsored = await sponsoredLegislation.json();
-      console.log("--- THEY SPONSORED ----", memberSponsored);
+      setListOfSponsLegsln(memberSponsored.sponsoredLegislation);
+      console.log("--- THEY SPONSORED ----", listOfSponsLegsln);
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
@@ -61,7 +64,7 @@ function App() {
 
       const ollamaData = await ollamaRes.json();
       setOllamaResponse(ollamaData.response); // Store response in state
-      console.log("Ollama said: ", ollamaData);
+      console.log("Ollama said: ", ollamaResponse);
     } catch (error) {
       console.error("Error fetching Ollama response:", error);
     }
@@ -88,7 +91,7 @@ function App() {
         members={stateCongressMembers}
         onSelectedMember={handleMemberSelect}
       />
-      <Bills />
+      <SponsoredLegislation sponsored={listOfSponsLegsln} />
     </>
   );
 }
