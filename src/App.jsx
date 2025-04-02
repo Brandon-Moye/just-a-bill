@@ -10,6 +10,7 @@ function App() {
   const [stateCongressMembers, setStateCongressMembers] = useState([]);
   const [selectedMemberId, setSelectedMemberId] = useState(null);
   const [listOfSponsLegsln, setListOfSponsLegsln] = useState([]);
+  const [selectedBill, setSelectedBill] = useState([]);
 
   const [prompt, setPrompt] = useState("");
   const [ollamaResponse, setOllamaResponse] = useState("");
@@ -37,6 +38,7 @@ function App() {
 
   const handleMemberSelect = async (bioguideId) => {
     setSelectedMemberId(bioguideId);
+    setListOfSponsLegsln([]);
 
     try {
       const sponsoredLegislation = await fetch(
@@ -50,6 +52,10 @@ function App() {
     }
   };
 
+  const handleBillSelect = async (billType, billNumber) => {
+    setSelectedBill([billType, billNumber]);
+    console.log("I want to learn about ", selectedBill);
+  };
   const ollamaZero = async () => {
     try {
       const ollamaRes = await fetch("http://localhost:5001/api/ollama", {
@@ -87,11 +93,16 @@ function App() {
         onChange={(e) => setPrompt(e.target.value)}
       ></textarea>
       <button onClick={ollamaZero}>Ask</button>
-      <Members
-        members={stateCongressMembers}
-        onSelectedMember={handleMemberSelect}
-      />
-      <SponsoredLegislation sponsored={listOfSponsLegsln} />
+      <div className="membersLegsFlex">
+        <Members
+          members={stateCongressMembers}
+          onSelectedMember={handleMemberSelect}
+        />
+        <SponsoredLegislation
+          sponsored={listOfSponsLegsln}
+          onSelectedBill={handleBillSelect}
+        />
+      </div>
     </>
   );
 }
